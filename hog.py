@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 import matplotlib.pyplot as plt
 from skimage.feature import hog
 
@@ -13,8 +14,8 @@ def extract_carac(images):
 
         images_hog.append(hog_image)
 
-        # Descomentar para ver imagem com HOG
-        plt.axis("off")
-        plt.imshow(hog_image, cmap="gray")
-        plt.show()
+        # # Descomentar para ver imagem com HOG
+        # plt.axis("off")
+        # plt.imshow(hog_image, cmap="gray")
+        # plt.show()
     return images_hog
