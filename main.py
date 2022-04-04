@@ -22,5 +22,7 @@ if __name__ == '__main__':
     for file in glob.glob(path_graves + '/**/*.jpg'):
         graves_images.append(cv2.imread(file, cv2.IMREAD_GRAYSCALE))
 
-    bmp_images, graves_images = extract_carac(bmp_images, graves_images)
+    bmp_images = extract_carac(bmp_images)
+    graves_images = extract_carac(graves_images)
+
     print('s')
