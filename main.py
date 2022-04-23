@@ -54,7 +54,7 @@ if __name__ == '__main__':
     print('Qtde de treino: {}'.format(len(x_train)))
     print('Qtde de validação: {}'.format(len(x_val)))
 
-    early_stop = EarlyStopping(monitor='loss', patience=10)
+    early_stop = EarlyStopping(monitor='val_loss', patience=10)
 
     model = Sequential()
     model.add(Dense(10, input_shape=(16384,), activation='relu'))
@@ -64,7 +64,10 @@ if __name__ == '__main__':
                   optimizer='adam',
                   metrics=['accuracy'])
 
-    history = model.fit(x_train, y_train, epochs=150, batch_size=10, callbacks=early_stop)
+    history = model.fit(x_train, y_train,
+                        epochs=150, batch_size=10,
+                        callbacks=early_stop,
+                        validation_data=(x_val, y_val))
 
     score = model.evaluate(x_val, y_val, verbose=0)
     print('Test loss:', score[0])
@@ -78,3 +81,5 @@ if __name__ == '__main__':
     ax[1].plot(history.history['accuracy'], color='b', label="Training accuracy")
     ax[1].plot(history.history['val_accuracy'], color='r',label="Validation accuracy")
     legend = ax[1].legend(loc='best', shadow=True)
+
+    plt.show()
