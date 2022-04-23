@@ -2,6 +2,7 @@ import glob
 import pydicom as dicom
 import numpy as np
 import pandas as pd
+from tensorflow.python.keras.callbacks import EarlyStopping
 
 from hog import extract_carac
 from tensorflow.keras.models import Sequential
@@ -51,22 +52,17 @@ if __name__ == '__main__':
     print('Qtde de treino: {}'.format(len(x_train)))
     print('Qtde de validação: {}'.format(len(x_val)))
 
-    print('-----------------------------------------------------------------')
-    print('X = ')
-    print(X)
-    print('-----------------------------------------------------------------')
-    print('y = ')
-    print(Y)
-    print('-----------------------------------------------------------------')
-    print(X[0].shape)
-    print('-----------------------------------------------------------------')
+    early_stop = EarlyStopping(monitor='val_loss', patience=30)
 
     model = Sequential()
     model.add(Dense(30, input_shape=(16384,), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adam',
+                  metrics=['accuracy'])
 
-    model.fit(x_train, y_train, epochs=150, batch_size=10)
+    model.fit(x_train, y_train, epochs=150, batch_size=10, callbacks=early_stop)
 
-    # _, accuracy = model.evaluate(X, y)
-    # print('Accuracy: %.2f' % (accuracy*100))
+    score = model.evaluate(x_val, y_val, verbose=0)
+    print('Test loss:', score[0])
+    print('Test accuracy:', score[1])
