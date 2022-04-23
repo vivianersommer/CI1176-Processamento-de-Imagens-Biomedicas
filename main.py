@@ -5,7 +5,7 @@ import pandas as pd
 
 from hog import extract_carac
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropou
+from tensorflow.keras.layers import Dense, Dropout
 
 path_bmt = 'CINTILOGRAFIAS/BMT'
 path_graves = 'CINTILOGRAFIAS/GRAVES'
@@ -14,6 +14,7 @@ if __name__ == '__main__':
 
     bmp_images = []
     graves_images = []
+    labels = []
     all = []
 
     for file in glob.glob(path_bmt + '/**/*.dcm'):
@@ -41,6 +42,15 @@ if __name__ == '__main__':
     X = df[:-1]
     y = df[-1:]
 
+    x_images = X[0]
+    x_labels = X[1]
+
+    y_images = y[0]
+    y_labels = y[1]
+
+    x_all = x_images + x_labels
+    y_all = y_images + y_labels
+
     print('-----------------------------------------------------------------')
     print('X = ')
     print(X)
@@ -50,12 +60,12 @@ if __name__ == '__main__':
     print('-----------------------------------------------------------------')
 
     model = Sequential()
-    model.add(Dense(X.shape[1], input_dim=X.shape[1], activation='relu'))
+    model.add(Dense(x_images[0].shape[1], input_dim=x_images[0].shape[1], activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, y, epochs=150, batch_size=10)
+    model.fit(x_images, y_images, epochs=150, batch_size=10)
 
-    _, accuracy = model.evaluate(X, y)
-    print('Accuracy: %.2f' % (accuracy*100))
+    # _, accuracy = model.evaluate(X, y)
+    # print('Accuracy: %.2f' % (accuracy*100))
