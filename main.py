@@ -57,7 +57,9 @@ if __name__ == '__main__':
     early_stop = EarlyStopping(monitor='val_loss', patience=10)
 
     model = Sequential()
-    model.add(Dense(10, input_shape=(16384,), activation='relu'))
+    model.add(Dense(30, input_shape=(16384,), activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(20, activation='relu'))
     model.add(Dropout(0.2))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy',
