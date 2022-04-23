@@ -31,19 +31,21 @@ if __name__ == '__main__':
     bmp_images = extract_carac(bmp_images)
     graves_images = extract_carac(graves_images)
 
-
+    labels = []
     for file in bmp_images:
         file = file.reshape(128 * 128)
-        all.append([file, 0])
+        all.append(file)
+        labels.append(0)
     
     for file in graves_images:
         file = file.reshape(128 * 128)
-        all.append([file, 1])
+        all.append(file)
+        labels.append(1)
 
-    df = pd.DataFrame(all)
-
-    X = df[0]
-    Y = df[1]
+    X = all
+    X = np.asarray(X)
+    Y = labels
+    Y = np.asarray(Y)
 
     x_train, x_val, y_train, y_val = train_test_split(X, Y, test_size=0.1, random_state=9)
     print('Qtde de treino: {}'.format(len(x_train)))
@@ -56,9 +58,11 @@ if __name__ == '__main__':
     print('y = ')
     print(Y)
     print('-----------------------------------------------------------------')
+    print(X[0].shape)
+    print('-----------------------------------------------------------------')
 
     model = Sequential()
-    model.add(Dense(30, input_shape=(128,128), activation='relu'))
+    model.add(Dense(30, input_shape=(16384,), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
