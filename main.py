@@ -33,9 +33,11 @@ if __name__ == '__main__':
 
 
     for file in bmp_images:
+        file = file.reshape(128 * 128)
         all.append([file, 0])
     
     for file in graves_images:
+        file = file.reshape(128 * 128)
         all.append([file, 1])
 
     df = pd.DataFrame(all)
@@ -43,7 +45,7 @@ if __name__ == '__main__':
     X = df[0]
     Y = df[1]
 
-    x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.1, random_state=9)
+    x_train, x_val, y_train, y_val = train_test_split(X, Y, test_size=0.1, random_state=9)
     print('Qtde de treino: {}'.format(len(x_train)))
     print('Qtde de validação: {}'.format(len(x_val)))
 
@@ -52,7 +54,7 @@ if __name__ == '__main__':
     print(X)
     print('-----------------------------------------------------------------')
     print('y = ')
-    print(y)
+    print(Y)
     print('-----------------------------------------------------------------')
 
     model = Sequential()
