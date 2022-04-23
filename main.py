@@ -6,6 +6,7 @@ import pandas as pd
 from hog import extract_carac
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
+from sklearn.model_selection import train_test_split
 
 path_bmt = 'CINTILOGRAFIAS/BMT'
 path_graves = 'CINTILOGRAFIAS/GRAVES'
@@ -39,17 +40,12 @@ if __name__ == '__main__':
 
     df = pd.DataFrame(all)
 
-    X = df[:-1]
-    y = df[-1:]
+    X = df[0]
+    Y = df[1]
 
-    x_images = X[0]
-    x_labels = X[1]
-
-    y_images = y[0]
-    y_labels = y[1]
-
-    x_all = x_images + x_labels
-    y_all = y_images + y_labels
+    x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.1, random_state=9)
+    print('Qtde de treino: {}'.format(len(x_train)))
+    print('Qtde de validação: {}'.format(len(x_val)))
 
     print('-----------------------------------------------------------------')
     print('X = ')
@@ -60,12 +56,11 @@ if __name__ == '__main__':
     print('-----------------------------------------------------------------')
 
     model = Sequential()
-    model.add(Dense(x_images[0].shape[1], input_dim=x_images[0].shape[1], activation='relu'))
+    model.add(Dense(30, input_shape=(128,128), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
-
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    model.fit(x_images, y_images, epochs=150, batch_size=10)
+    model.fit(x_train, y_train, epochs=150, batch_size=10)
 
     # _, accuracy = model.evaluate(X, y)
     # print('Accuracy: %.2f' % (accuracy*100))
