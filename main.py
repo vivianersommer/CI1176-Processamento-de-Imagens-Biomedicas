@@ -1,13 +1,11 @@
 import glob
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pydicom as dicom
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.layers import LeakyReLU, Dense, Dropout
+from sklearn.model_selection import LeaveOneOut
+from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.python.keras.callbacks import EarlyStopping
-from sklearn.model_selection import LeaveOneOut
 
 from hog import extract_carac
 
@@ -50,11 +48,9 @@ if __name__ == '__main__':
     Y = labels
     Y = np.asarray(Y)
     loo = LeaveOneOut()
-    # x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.08, random_state=9)
 
     i = 0
     for train_index, test_index in loo.split(X):
-        
         x_train, x_test = X[train_index], X[test_index]
         y_train, y_test = Y[train_index], Y[test_index]
 
@@ -65,13 +61,13 @@ if __name__ == '__main__':
         model.add(Dropout(0.4))
         model.add(Dense(1, activation='sigmoid'))
         model.compile(loss='binary_crossentropy',
-                    optimizer='adam',
-                    metrics=['accuracy'])
+                      optimizer='adam',
+                      metrics=['accuracy'])
 
         model.fit(x_train, y_train,
-                            epochs=150, batch_size=10,
-                            callbacks=early_stop,
-                            validation_data=(x_test, y_test))
+                  epochs=150, batch_size=10,
+                  callbacks=early_stop,
+                  validation_data=(x_test, y_test))
 
         score = model.evaluate(x_test, y_test, verbose=0)
         print('Test loss:', score[0])
