@@ -51,7 +51,8 @@ if __name__ == '__main__':
     Y = np.asarray(Y)
     loo = LeaveOneOut()
     # x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.08, random_state=9)
-    
+
+    i = 0
     for train_index, test_index in loo.split(X):
         
         x_train, x_test = X[train_index], X[test_index]
@@ -76,13 +77,5 @@ if __name__ == '__main__':
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
 
-        # fig, ax = plt.subplots(1, 2, figsize=(16, 8))
-        # ax[0].plot(history.history['loss'], color='b', label="Training loss")
-        # ax[0].plot(history.history['val_loss'], color='r', label="validation loss", axes=ax[0])
-        # legend = ax[0].legend(loc='best', shadow=True)
-
-        # ax[1].plot(history.history['accuracy'], color='b', label="Training accuracy")
-        # ax[1].plot(history.history['val_accuracy'], color='r', label="Validation accuracy")
-        # legend = ax[1].legend(loc='best', shadow=True)
-
-        # plt.show()
+        model.save('modelos/modelo_' + str(i))
+        i = i + 1
