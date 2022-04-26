@@ -6,6 +6,8 @@ from sklearn.model_selection import LeaveOneOut
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.python.keras.callbacks import EarlyStopping
+from sklearn.metrics import confusion_matrix
+
 
 from hog import extract_carac
 
@@ -50,6 +52,8 @@ if __name__ == '__main__':
     loo = LeaveOneOut()
 
     i = 0
+    resultado_original = []
+    resultado_obtido = []
     for train_index, test_index in loo.split(X):
         x_train, x_test = X[train_index], X[test_index]
         y_train, y_test = Y[train_index], Y[test_index]
@@ -67,11 +71,37 @@ if __name__ == '__main__':
         model.fit(x_train, y_train,
                   epochs=150, batch_size=10,
                   callbacks=early_stop,
-                  validation_data=(x_test, y_test))
+                  validation_data=(x_test, y_test),
+                  verbose = False)
 
-        score = model.evaluate(x_test, y_test, verbose=0)
-        print('Test loss:', score[0])
-        print('Test accuracy:', score[1])
-
-        model.save('modelos/modelo_' + str(i))
+        predictions = (model.predict(x_test) > 0.5).astype("int32")
+        resultado_original.append(float(y_test[0]))
+        resultado_obtido.append(predictions[0][0])
+        cf_matrix = confusion_matrix([float(y_test[0])], [predictions[0][0]])
+        print("Modelo " + str(i))
+        print(cf_matrix)
         i = i + 1
+
+    print(resultado_original)
+    print(resultado_obtido)
+
+    cf_matrix = confusion_matrix(resultado_original, resultado_obtido)
+    print(cf_matrix)
+    #
+    # tn, fp, fn, tp = cf_matrix
+    #
+    # # Sensibilidade
+    # # VP / (VP+FN)
+    # sensibilidade = tp / (tp + fn)
+    #
+    # # Especificidade
+    # # VN / (FP+VN)
+    # especifidade = tp / (fp + tn)
+    #
+    # # Acurácia
+    # # (VP+VN) / N
+    # acuracia = (tp + tn) / (fp + fn)
+    #
+    # # Precisão
+    # # VP / (VP+FP)
+    # precisao = tp / (tp + fp)
