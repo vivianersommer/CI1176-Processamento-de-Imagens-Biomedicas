@@ -2,12 +2,11 @@ import glob
 
 import numpy as np
 import pydicom as dicom
+from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import LeaveOneOut
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.python.keras.callbacks import EarlyStopping
-from sklearn.metrics import confusion_matrix
-
 
 from hog import extract_carac
 
@@ -72,7 +71,7 @@ if __name__ == '__main__':
                   epochs=150, batch_size=10,
                   callbacks=early_stop,
                   validation_data=(x_test, y_test),
-                  verbose = False)
+                  verbose=False)
 
         predictions = (model.predict(x_test) > 0.5).astype("int32")
         resultado_original.append(float(y_test[0]))
