@@ -1,23 +1,18 @@
 # CI1176-Trabalho
 
-#Antes de executar
+# Antes de executar
 1. Criar venv.
 2. Baixar dependências:
 ```
 pip install -r requirements.txt
 ```
 
-#Executar
+# Executar
 1. Rode o comando, usando a venv
 ```
 python main.py
 ```
 
-#Extrutura do código
-- main.py:
-  - Função principal
-
-
-#Alunas
+# Alunas
 Luzia Millena Santos Silva - GRR20185174
 Viviane da Rosa Sommer - GRR20182564
