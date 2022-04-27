@@ -14,5 +14,5 @@ python main.py
 ```
 
 # Alunas
-Luzia Millena Santos Silva - GRR20185174
+Luzia Millena Santos Silva - GRR20185174 \
 Viviane da Rosa Sommer - GRR20182564
