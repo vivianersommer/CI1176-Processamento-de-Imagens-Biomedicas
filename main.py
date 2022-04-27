@@ -123,14 +123,15 @@ def analize_matriz_confusao(resultado_original, resultado_obtido, tn, fp, fn, tp
 
         print("Modelo " + str(i + 1) + " - Confusion Matrix ---------------------------------")
         print("Imagem de avaliação = " + label_result + " - " + str(resultado_original[0]))
-        print(" [ " + str(val) + "   " + str(fp[i]) + " ] ")
-        print(" [ " + str(fn[i]) + "   " + str(tp[i]) + " ] ")
+        print(" [ " + str(tp[i]) + "   " + str(fp[i]) + " ] ")
+        print(" [ " + str(fn[i]) + "   " + str(tn[i]) + " ] ")
         print("-------------------------------------------------------------")
         i = i + 1
 
-    cf_matrix = confusion_matrix(resultado_original, resultado_obtido)
+    tn_y, fp_y, fn_y, tp_y = confusion_matrix(resultado_original, resultado_obtido).ravel()
     print("Todos os modelos - Confusion Matrix --------------------------")
-    print(cf_matrix)
+    print(" [ " + str(tp_y) + "   " + str(fp_y) + " ] ")
+    print(" [ " + str(fn_y) + "   " + str(tn_y) + " ] ")
     print("-------------------------------------------------------------")
     print("-----------------------------------------------------------------------------------------------------------")
 
@@ -157,10 +158,10 @@ if __name__ == '__main__':
     acuracia = []
     precisao = []
     for i, val in enumerate(tp):
-        if (val + fn[i]) == 0:
+        if (tp[i] + fn[i]) == 0:
             continue# sens = 0.0
         else:
-            sens = val / (val + fn[i])
+            sens = tp[i] / (tp[i] + fn[i])
         sensibilidade.append(sens)
 
     # Especificidade
@@ -170,26 +171,17 @@ if __name__ == '__main__':
             continue
             # espec = 0.0
         else:
-            espec = val / (fp[i] + tn[i])
+            espec = tn[i] / (fp[i] + tn[i])
         especifidade.append(espec)
 
     # Acurácia
     # (VP+VN) / N
     for i, val in enumerate(tp):
-        if (fp[i] + fn[i]) == 0:
+        if (fp[i] + fn[i] + tp[i] + tn[i]) == 0:
             continue # acur = 0.0
         else:
-            acur = (val + tn[i]) / (fp[i] + fn[i])
+            acur = (tp + tn[i]) / (fp[i] + fn[i] + tp[i] + tn[i])
         acuracia.append(acur)
-
-    # Precisão
-    # VP / (VP+FP)
-    for i, val in enumerate(tp):
-        if (val + fp[i]) == 0:
-            continue # prec = 0.0
-        else:
-            prec = val / (val + fp[i])
-        precisao.append(prec)
 
     print("Sensibilidade - Geral - Média -------------------------------")
     print(np.mean(sensibilidade))
@@ -213,12 +205,4 @@ if __name__ == '__main__':
 
     print("Acurácia - Geral - Desvio Padrão ----------------------------")
     print(np.std(acuracia))
-    print("-------------------------------------------------------------")
-
-    print("Precisão - Geral - Média ------------------------------------")
-    print(np.mean(precisao))
-    print("-------------------------------------------------------------")
-
-    print("Precisão - Geral - Desvio Padrão ----------------------------")
-    print(np.std(precisao))
     print("-------------------------------------------------------------")
