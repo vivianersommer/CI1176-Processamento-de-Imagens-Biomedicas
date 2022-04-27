@@ -3,13 +3,12 @@ import logging
 
 import numpy as np
 import pydicom as dicom
+from skimage.feature import hog
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import LeaveOneOut
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.python.keras.callbacks import EarlyStopping
-
-from hog import extract_carac
 
 path_bmt = 'CINTILOGRAFIAS/BMT'
 path_graves = 'CINTILOGRAFIAS/GRAVES'
@@ -30,6 +29,16 @@ def ler_imagens():
         graves_images.append(pixel_array_numpy)
 
     return bmp_images, graves_images
+
+
+def extract_carac(images):
+    images_hog = []
+    for image in images:
+        fd, hog_image = hog(image, orientations=9, pixels_per_cell=(8, 8),
+                            cells_per_block=(2, 2), visualize=True)
+
+        images_hog.append(hog_image)
+    return images_hog
 
 
 def extracao_caracteristicas(bmp_images, graves_images):
@@ -61,7 +70,6 @@ def criar_labels(bmp_images, graves_images):
 
 
 def criar_modelos(labels, all_images):
-
     X = all_images
     X = np.asarray(X)
     Y = labels
@@ -84,7 +92,7 @@ def criar_modelos(labels, all_images):
         early_stop = EarlyStopping(monitor='val_loss', patience=10)
 
         model = Sequential()
-        model.add(Dense(20, input_shape=(16384,), activation='relu'))
+        model.add(Dense(30, input_shape=(16384,), activation='relu'))
         model.add(Dropout(0.4))
         model.add(Dense(1, activation='sigmoid'))
         model.compile(loss='binary_crossentropy',
@@ -112,8 +120,7 @@ def criar_modelos(labels, all_images):
     return resultado_original, resultado_obtido, tn, fp, fn, tp
 
 
-def analize_matriz_confusao(resultado_original, resultado_obtido, tn, fp, fn, tp):
-
+def analisar_matriz_confusao(resultado_original, resultado_obtido, tn, fp, fn, tp):
     i = 0
     for val in tn:
         if resultado_original[0] == 0:
@@ -136,49 +143,32 @@ def analize_matriz_confusao(resultado_original, resultado_obtido, tn, fp, fn, tp
     print("-----------------------------------------------------------------------------------------------------------")
 
 
-if __name__ == '__main__':
-
-    logging.getLogger('tensorflow').disabled = True     # evita alguns warnings do tensorflow, por nao ter GPU
-
-    bmp_images, graves_images = ler_imagens()
-
-    bmp_images, graves_images = extracao_caracteristicas(bmp_images, graves_images)
-
-    labels, all_images = criar_labels(bmp_images, graves_images)
-
-    resultado_original, resultado_obtido, tn, fp, fn, tp = criar_modelos(labels, all_images)
-
-    analize_matriz_confusao(resultado_original, resultado_obtido, tn, fp, fn, tp)
-
+def analisar_metricas(tn, fp, fn, tp):
     print("Avaliando os modelos --------------------------------------------------------------------------------------")
-    # Sensibilidade
-    # VP / (VP+FN)
     sensibilidade = []
     especifidade = []
     acuracia = []
-    precisao = []
+
+    # Sensibilidade
     for i, val in enumerate(tp):
         if (tp[i] + fn[i]) == 0:
-            continue# sens = 0.0
+            continue
         else:
             sens = tp[i] / (tp[i] + fn[i])
         sensibilidade.append(sens)
 
     # Especificidade
-    # VN / (FP+VN)
     for i, val in enumerate(tp):
-        if (fp[i] + tn[i]) == 0:
+        if (tn[i] + fp[i]) == 0:
             continue
-            # espec = 0.0
         else:
-            espec = tn[i] / (fp[i] + tn[i])
+            espec = tn[i] / (tn[i] + fp[i])
         especifidade.append(espec)
 
     # Acurácia
-    # (VP+VN) / N
     for i, val in enumerate(tp):
         if (fp[i] + fn[i] + tp[i] + tn[i]) == 0:
-            continue # acur = 0.0
+            continue
         else:
             acur = (tp + tn[i]) / (fp[i] + fn[i] + tp[i] + tn[i])
         acuracia.append(acur)
@@ -206,3 +196,19 @@ if __name__ == '__main__':
     print("Acurácia - Geral - Desvio Padrão ----------------------------")
     print(np.std(acuracia))
     print("-------------------------------------------------------------")
+
+
+if __name__ == '__main__':
+    logging.getLogger('tensorflow').disabled = True  # evita alguns warnings do tensorflow, por nao ter GPU
+
+    bmp_images, graves_images = ler_imagens()
+
+    bmp_images, graves_images = extracao_caracteristicas(bmp_images, graves_images)
+
+    labels, all_images = criar_labels(bmp_images, graves_images)
+
+    resultado_original, resultado_obtido, tn, fp, fn, tp = criar_modelos(labels, all_images)
+
+    analisar_matriz_confusao(resultado_original, resultado_obtido, tn, fp, fn, tp)
+
+    analisar_metricas(tn, fp, fn, tp)

@@ -7,17 +7,17 @@
 pip install -r requirements.txt
 ```
 
+#Executar
+1. Rode o comando, usando a venv
+```
+python main.py
+```
+
 #Extrutura do código
 - main.py:
   - Função principal
-- transform_data.py:
-  - Recebe um path onde tem imagens DICOM e salva uma imagem jpg para cada uma.
-- hog.py
-  - Recebe um vetor de imagens jpg e retorna a imagem HOG de cada uma.
-    
-#Passo a passo
-1. Transformação de imagem DICOM em jpg
-2. Extração de HOG de cada imagem jpg
-3. Treinado modelo MLP com características HOG
-4. Avaliação dos modelos com "Leave-one-patient-out"
-5. Gerado CSV com média e desvio padrão dos modelos
+
+
+#Alunas
+Luzia Millena Santos Silva - GRR20185174
+Viviane da Rosa Sommer - GRR20182564
