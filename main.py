@@ -158,7 +158,7 @@ if __name__ == '__main__':
     precisao = []
     for i, val in enumerate(tp):
         if (val + fn[i]) == 0:
-            sens = 0.0
+            continue# sens = 0.0
         else:
             sens = val / (val + fn[i])
         sensibilidade.append(sens)
@@ -167,7 +167,8 @@ if __name__ == '__main__':
     # VN / (FP+VN)
     for i, val in enumerate(tp):
         if (fp[i] + tn[i]) == 0:
-            espec = 0.0
+            continue
+            # espec = 0.0
         else:
             espec = val / (fp[i] + tn[i])
         especifidade.append(espec)
@@ -176,7 +177,7 @@ if __name__ == '__main__':
     # (VP+VN) / N
     for i, val in enumerate(tp):
         if (fp[i] + fn[i]) == 0:
-            acur = 0.0
+            continue # acur = 0.0
         else:
             acur = (val + tn[i]) / (fp[i] + fn[i])
         acuracia.append(acur)
@@ -185,7 +186,7 @@ if __name__ == '__main__':
     # VP / (VP+FP)
     for i, val in enumerate(tp):
         if (val + fp[i]) == 0:
-            prec = 0.0
+            continue # prec = 0.0
         else:
             prec = val / (val + fp[i])
         precisao.append(prec)
