@@ -123,13 +123,13 @@ def criar_modelos(labels, all_images):
 def analisar_matriz_confusao(resultado_original, resultado_obtido, tn, fp, fn, tp):
     i = 0
     for val in tn:
-        if resultado_original[0] == 0:
+        if resultado_original[i] == 0:
             label_result = "BMT"
         else:
             label_result = "GRAVES"
 
         print("Modelo " + str(i + 1) + " - Confusion Matrix ---------------------------------")
-        print("Imagem de avaliação = " + label_result + " - " + str(resultado_original[0]))
+        print("Imagem de avaliação = " + label_result + " - " + str(resultado_original[i]))
         print(" [ " + str(tp[i]) + "   " + str(fp[i]) + " ] ")
         print(" [ " + str(fn[i]) + "   " + str(tn[i]) + " ] ")
         print("-------------------------------------------------------------")
